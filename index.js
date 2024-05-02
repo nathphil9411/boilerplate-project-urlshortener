@@ -53,8 +53,9 @@ const matchUrl = async (req, res) => {
 const shortenUrl = async (req, res) => {
 	try {
 		const originalUrl = req.body.url;
-		const test = /^https:\/\//.test(originalUrl);
-		if (!isUrl(originalUrl) || !test) throw new Error();
+		const test = /^https:\/\/.*\.com$/.test(originalUrl);
+
+		if (!test) throw new Error();
 		let shortUrl = 0;
 		const lastUrl = await Url.findOne({}).sort({ short_url: "desc" });
 		if (!lastUrl) shortUrl++;
