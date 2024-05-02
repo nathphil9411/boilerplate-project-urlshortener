@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const { isUrl } = require("check-valid-url");
 const app = express();
 const bodyParser = require("body-parser");
 
@@ -52,6 +53,8 @@ const matchUrl = async (req, res) => {
 const shortenUrl = async (req, res) => {
 	try {
 		const originalUrl = req.body.url;
+		const test = /^https:\/\//.test(originalUrl);
+		if (!isUrl(originalUrl) || !test) throw new Error();
 		let shortUrl = 0;
 		const lastUrl = await Url.findOne({}).sort({ short_url: "desc" });
 		if (!lastUrl) shortUrl++;
@@ -60,7 +63,6 @@ const shortenUrl = async (req, res) => {
 			original_url: originalUrl,
 			short_url: shortUrl,
 		});
-		console.log(newUrl);
 		res.json(newUrl);
 	} catch (err) {
 		res.json({ error: "invalid url" });
